@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Jordan View · Owner</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --sage:#6B8F71;--sage-l:#EEF3EE;--sage-m:#A8C4AC;--slate:#3D4A45;
+      --cream:#F7F5F0;--sand:#E8E2D5;--dark:#2A2F2C;
+      --accent:#C4834A;--accent-l:#F5EAE0;
+      --text:#2A2F2C;--muted:#6B7570;--white:#fff;--r:12px;
+      --danger:#D96B68;--danger-l:#FEE9E8;--warn:#E8A44A;--warn-l:#FEF3E2;
+      --green:#4A8F5F;--green-l:#E6F4EC;
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--text);min-height:100vh;font-size:15px;line-height:1.5}
+
+    .hdr{background:var(--dark);padding:0 28px;display:flex;align-items:center;justify-content:space-between;height:60px;position:sticky;top:0;z-index:100}
+    .logo{font-family:'DM Serif Display',serif;font-size:17px;color:var(--cream);text-decoration:none}
+    .logo em{color:var(--sage-m);font-style:italic}
+    .badge{font-size:11px;font-weight:500;color:var(--accent);text-transform:uppercase;letter-spacing:.1em;background:rgba(196,131,74,.15);border-radius:20px;padding:3px 10px}
+
+    .nav{background:var(--white);border-bottom:1px solid var(--sand);display:flex;padding:0 28px}
+    .tab{padding:13px 18px;font-size:13px;font-weight:500;color:var(--muted);border-bottom:2px solid transparent;cursor:pointer;display:flex;align-items:center;gap:7px;margin-bottom:-1px;transition:color .12s;user-select:none}
+    .tab.on{color:var(--sage);border-bottom-color:var(--sage)}
+    .tab:hover:not(.on){color:var(--slate)}
+    .tbadge{background:var(--accent);color:#fff;font-size:10px;font-weight:500;border-radius:10px;padding:1px 6px;display:none}
+    .tbadge.v{display:inline-block}
+
+    .main{padding:28px;max-width:720px;margin:0 auto}
+
+    .sbox{background:var(--white);border:1px solid var(--sand);border-radius:var(--r);padding:40px;text-align:center;color:var(--muted);font-size:14px}
+    .sbox.err{border-color:var(--danger-l);background:var(--danger-l);color:var(--danger)}
+    .spin{width:22px;height:22px;border:2px solid var(--sand);border-top-color:var(--sage);border-radius:50%;animation:sp .7s linear infinite;margin:0 auto 12px}
+    @keyframes sp{to{transform:rotate(360deg)}}
+
+    .pcard{background:var(--white);border:1.5px solid var(--sand);border-radius:var(--r);padding:20px 22px;margin-bottom:14px;transition:border-color .15s,box-shadow .15s}
+    .pcard.target{border-color:var(--accent);box-shadow:0 0 0 3px rgba(196,131,74,.12)}
+    .pcard.done{opacity:.7}
+
+    .pcard-new{font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:.1em;color:var(--accent);margin-bottom:10px;display:flex;align-items:center;gap:6px}
+    .dot-pulse{width:7px;height:7px;border-radius:50%;background:var(--accent);flex-shrink:0;animation:dp 1.4s ease-in-out infinite}
+    @keyframes dp{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.4);opacity:.5}}
+
+    .pcard-hd{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:14px}
+    .pcard-amt{font-family:'DM Serif Display',serif;font-size:34px;line-height:1;color:var(--dark);margin-bottom:3px}
+    .pcard-stay{font-size:13px;font-weight:500;color:var(--slate)}
+    .pcard-meta{font-size:12px;color:var(--muted);margin-top:2px}
+    .pill{font-size:10px;font-weight:500;border-radius:20px;padding:3px 10px;letter-spacing:.03em;flex-shrink:0}
+    .p-pending{background:var(--warn-l);color:#9A6520}
+    .p-paid{background:var(--green-l);color:var(--green)}
+    .p-rejected{background:var(--danger-l);color:var(--danger)}
+
+    .cnote{background:var(--sage-l);border-left:3px solid var(--sage-m);border-radius:0 8px 8px 0;padding:10px 13px;font-size:13px;line-height:1.5;color:var(--slate);margin-bottom:14px}
+    .cnote-lbl{font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:3px}
+
+    .drep{background:var(--cream);border:1px solid var(--sand);border-radius:8px;padding:14px 16px;margin-bottom:14px}
+    .drep-hd{display:flex;align-items:center;gap:8px;margin-bottom:10px;flex-wrap:wrap}
+    .drep-title{font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+    .sev-pill{font-size:10px;font-weight:500;border-radius:20px;padding:2px 9px}
+    .sev-minor{background:var(--sage-l);color:var(--sage)}
+    .sev-moderate{background:var(--warn-l);color:#9A6520}
+    .sev-severe{background:var(--danger-l);color:var(--danger)}
+    .drep-area{font-size:12px;color:var(--muted);text-transform:capitalize}
+    .drep-note{font-size:13px;color:var(--text);line-height:1.4;margin-bottom:12px}
+
+    .photo-strip{display:flex;gap:8px;flex-wrap:wrap}
+    .photo-thumb{width:72px;height:72px;border-radius:8px;object-fit:cover;border:1px solid var(--sand);cursor:pointer;transition:opacity .12s,transform .12s}
+    .photo-thumb:hover{opacity:.85;transform:scale(1.04)}
+
+    .pcard-acts{display:flex;gap:10px;margin-top:16px}
+    .abtn{flex:1;padding:11px;border-radius:8px;border:1.5px solid var(--sand);background:var(--white);font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;cursor:pointer;color:var(--text);transition:all .12s;display:flex;align-items:center;justify-content:center;gap:6px}
+    .abtn:hover:not(:disabled){border-color:var(--sage-m);background:var(--cream)}
+    .abtn.reject:hover:not(:disabled){border-color:var(--danger);color:var(--danger);background:var(--danger-l)}
+    .abtn.approve{background:var(--green);color:#fff;border-color:var(--green)}
+    .abtn.approve:hover:not(:disabled){background:#3A7A4F;border-color:#3A7A4F}
+    .abtn:disabled{opacity:.5;cursor:not-allowed}
+
+    .pcard-confirm{border-radius:8px;padding:13px 16px;display:flex;align-items:center;gap:12px;margin-top:16px}
+    .pcard-confirm.ok{background:var(--green-l);border:1px solid #C3DFC9}
+    .pcard-confirm.rej{background:var(--danger-l);border:1px solid #F5C5C4}
+    .confirm-ic{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0}
+    .ok .confirm-ic{background:var(--green);color:#fff}
+    .rej .confirm-ic{background:var(--danger);color:#fff}
+    .confirm-text{font-size:13px;font-weight:500}
+    .confirm-sub{font-size:12px;color:var(--muted);margin-top:1px}
+
+    .lb{position:fixed;inset:0;background:rgba(0,0,0,.9);display:flex;align-items:center;justify-content:center;z-index:500;opacity:0;pointer-events:none;transition:opacity .18s}
+    .lb.open{opacity:1;pointer-events:all}
+    .lb-img{max-width:90vw;max-height:85vh;border-radius:6px;object-fit:contain}
+    .lb-close{position:absolute;top:18px;right:22px;background:rgba(255,255,255,.12);color:#fff;border:none;border-radius:50%;width:36px;height:36px;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .12s}
+    .lb-close:hover{background:rgba(255,255,255,.22)}
+    .lb-nav{position:absolute;top:50%;transform:translateY(-50%);background:rgba(255,255,255,.1);color:#fff;border:none;border-radius:50%;width:44px;height:44px;font-size:22px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .12s;user-select:none}
+    .lb-nav:hover{background:rgba(255,255,255,.2)}
+    .lb-prev{left:20px}.lb-next{right:20px}
+    .lb-counter{position:absolute;bottom:18px;left:50%;transform:translateX(-50%);color:rgba(255,255,255,.5);font-size:12px;letter-spacing:.08em}
+
+    .toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(70px);background:var(--dark);color:var(--cream);padding:11px 20px;border-radius:28px;font-size:13px;font-weight:500;display:flex;align-items:center;gap:8px;transition:transform .28s cubic-bezier(.34,1.56,.64,1);z-index:999;white-space:nowrap;pointer-events:none}
+    .toast.show{transform:translateX(-50%) translateY(0)}
+    .tdot{width:7px;height:7px;border-radius:50%;flex-shrink:0;background:var(--sage-m)}
+    .toast.te .tdot{background:var(--danger)}
+
+    @media(max-width:600px){
+      .main{padding:16px}
+      .pcard{padding:16px 14px}
+      .pcard-amt{font-size:28px}
+      .pcard-acts{flex-direction:column}
+      .nav{padding:0 16px}
+      .tab{padding:12px 14px}
+    }
+  </style>
+</head>
+<body>
+
+<div id="toast" class="toast" role="status" aria-live="polite"><span class="tdot"></span><span id="tmsg"></span></div>
+
+<div id="lb" class="lb" onclick="if(event.target===this)lbClose()">
+  <button class="lb-close" onclick="lbClose()" aria-label="Close">&#10005;</button>
+  <button class="lb-nav lb-prev" id="lb-prev" onclick="lbNav(-1)" aria-label="Previous">&#8249;</button>
+  <img id="lb-img" class="lb-img" src="" alt="Damage photo">
+  <button class="lb-nav lb-next" id="lb-next" onclick="lbNav(1)" aria-label="Next">&#8250;</button>
+  <div class="lb-counter" id="lb-counter"></div>
+</div>
+
+<header class="hdr">
+  <span class="logo">240 <em>Jordan View</em></span>
+  <span class="badge">Owner</span>
+</header>
+
+<nav class="nav">
+  <div class="tab on" id="t-pending" onclick="setTab('pending')">
+    Pending <span class="tbadge" id="b-pending"></span>
+  </div>
+  <div class="tab" id="t-paid" onclick="setTab('paid')">Paid</div>
+  <div class="tab" id="t-rejected" onclick="setTab('rejected')">Rejected</div>
+</nav>
+
+<main class="main">
+  <div id="loading" class="sbox"><div class="spin"></div>Loading…</div>
+  <div id="error"   class="sbox err" style="display:none"></div>
+  <div id="list"    style="display:none"></div>
+  <div id="empty"   class="sbox" style="display:none">No payment requests here.</div>
+</main>
+
+<script>
+const TARGET = (() => {
+  const p = new URLSearchParams(location.search).get('payout');
+  return p ? parseInt(p, 10) : null;
+})();
+
+let curStatus      = 'pending';
+let currentPayouts = [];
+let lbPhotos       = [];
+let lbIdx          = 0;
+let toastTimer;
+
+// ── Tabs ───────────────────────────────────────────────────────────────────────
+function setTab(status) {
+  if (curStatus === status) return;
+  curStatus = status;
+  document.querySelectorAll('.tab').forEach(el => el.classList.remove('on'));
+  document.getElementById('t-' + status).classList.add('on');
+  loadPayouts(status);
+}
+
+// ── Load ───────────────────────────────────────────────────────────────────────
+async function loadPayouts(status) {
+  show('loading'); hide('error'); hide('list'); hide('empty');
+
+  try {
+    const res = await fetch('/api/payout/approve?status=' + encodeURIComponent(status));
+    if (!res.ok) {
+      const d = await res.json().catch(() => ({}));
+      throw new Error(d.error || String(res.status));
+    }
+    const data = await res.json();
+    currentPayouts = data.payouts || [];
+
+    if (status === 'pending') {
+      const b = document.getElementById('b-pending');
+      if (currentPayouts.length) { b.textContent = currentPayouts.length; b.classList.add('v'); }
+      else b.classList.remove('v');
+    }
+
+    hide('loading');
+    if (!currentPayouts.length) { show('empty'); return; }
+
+    document.getElementById('list').innerHTML = currentPayouts.map(p => cardHTML(p, status)).join('');
+    show('list');
+
+    if (TARGET) {
+      const el = document.getElementById('pcard-' + TARGET);
+      if (el) setTimeout(() => el.scrollIntoView({ behavior: 'smooth', block: 'center' }), 80);
+    }
+  } catch (err) {
+    hide('loading');
+    document.getElementById('error').textContent = 'Could not load payouts — ' + err.message;
+    show('error');
+  }
+}
+
+// ── Card HTML ──────────────────────────────────────────────────────────────────
+function cardHTML(p, status) {
+  const isTarget  = p.id === TARGET;
+  const isPending = status === 'pending';
+
+  const date = p.submitted_at
+    ? new Date((p.submitted_at.endsWith('Z') ? p.submitted_at : p.submitted_at + 'Z'))
+        .toLocaleDateString('en-CA', { month: 'short', day: 'numeric', year: 'numeric' })
+    : '—';
+
+  const newBanner = isTarget && isPending
+    ? `<div class="pcard-new"><span class="dot-pulse"></span>New payment request</div>`
+    : '';
+
+  const noteHTML = p.cleaner_note
+    ? `<div class="cnote"><div class="cnote-lbl">Cleaner note</div>${esc(p.cleaner_note)}</div>`
+    : '';
+
+  let reportHTML = '';
+  if (p.report_id) {
+    const sev      = (p.severity || 'minor').toLowerCase();
+    const sevLabel = sev.charAt(0).toUpperCase() + sev.slice(1);
+    const areaEl   = p.area ? `<span class="drep-area">${esc(p.area)}</span>` : '';
+    const noteEl   = p.report_note ? `<div class="drep-note">${esc(p.report_note)}</div>` : '';
+
+    let photosHTML = '';
+    if (p.photo_urls && p.photo_urls.length) {
+      const thumbs = p.photo_urls
+        .filter(ph => ph && ph.url)
+        .map((ph, i) => `<img class="photo-thumb" src="${esc(ph.url)}" loading="lazy"
+             onclick="lbOpen(${p.id},${i})" alt="Photo ${i + 1}">`)
+        .join('');
+      if (thumbs) photosHTML = `<div class="photo-strip">${thumbs}</div>`;
+    }
+
+    reportHTML = `
+      <div class="drep">
+        <div class="drep-hd">
+          <span class="drep-title">Damage report</span>
+          <span class="sev-pill sev-${esc(sev)}">${sevLabel}</span>
+          ${areaEl}
+        </div>
+        ${noteEl}
+        ${photosHTML}
+      </div>`;
+  }
+
+  let actionsHTML;
+  if (isPending) {
+    actionsHTML = `
+      <div class="pcard-acts" id="acts-${p.id}">
+        <button class="abtn reject"  onclick="doAction(${p.id},'reject')">Decline</button>
+        <button class="abtn approve" onclick="doAction(${p.id},'approve')">Approve &amp; Pay &#8594;</button>
+      </div>`;
+  } else if (status === 'paid') {
+    actionsHTML = `
+      <div class="pcard-confirm ok">
+        <span class="confirm-ic">&#10003;</span>
+        <div>
+          <div class="confirm-text">Payment sent via PayPal</div>
+          <div class="confirm-sub">${reviewedDate(p)}</div>
+        </div>
+      </div>`;
+  } else {
+    actionsHTML = `
+      <div class="pcard-confirm rej">
+        <span class="confirm-ic">&#10005;</span>
+        <div>
+          <div class="confirm-text">Declined</div>
+          <div class="confirm-sub">${reviewedDate(p)}</div>
+        </div>
+      </div>`;
+  }
+
+  return `
+    <div class="pcard${isTarget ? ' target' : ''}" id="pcard-${p.id}">
+      ${newBanner}
+      <div class="pcard-hd">
+        <div>
+          <div class="pcard-amt">$${esc(p.amount_usd)}</div>
+          <div class="pcard-stay">${esc(p.res_label || p.res_id || '—')}</div>
+          <div class="pcard-meta">Submitted ${date}</div>
+        </div>
+        <span class="pill p-${esc(status)}">${statusLabel(status)}</span>
+      </div>
+      ${noteHTML}
+      ${reportHTML}
+      ${actionsHTML}
+    </div>`;
+}
+
+function reviewedDate(p) {
+  if (!p.reviewed_at) return '';
+  return new Date((p.reviewed_at.endsWith('Z') ? p.reviewed_at : p.reviewed_at + 'Z'))
+    .toLocaleDateString('en-CA', { month: 'short', day: 'numeric', year: 'numeric' });
+}
+
+// ── Approve / Reject ───────────────────────────────────────────────────────────
+async function doAction(payoutId, action) {
+  const acts = document.getElementById('acts-' + payoutId);
+  if (!acts) return;
+
+  const buttons    = Array.from(acts.querySelectorAll('button'));
+  const approveBtn = acts.querySelector('.approve');
+  const rejectBtn  = acts.querySelector('.reject');
+
+  buttons.forEach(b => { b.disabled = true; });
+  if (action === 'approve' && approveBtn) approveBtn.textContent = 'Approving…';
+  if (action === 'reject'  && rejectBtn)  rejectBtn.textContent  = 'Declining…';
+
+  try {
+    const res = await fetch('/api/payout/approve', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ payout_id: payoutId, action }),
+    });
+    const data = await res.json();
+
+    if (!res.ok) {
+      toast(data.error || data.detail || 'Request failed', true);
+      buttons.forEach(b => { b.disabled = false; });
+      if (approveBtn) approveBtn.textContent = 'Approve & Pay →';
+      if (rejectBtn)  rejectBtn.textContent  = 'Decline';
+      return;
+    }
+
+    const actsEl = document.getElementById('acts-' + payoutId);
+    if (actsEl) {
+      if (action === 'approve') {
+        const amtNote = data.amount_usd ? ' &mdash; $' + esc(String(data.amount_usd)) : '';
+        actsEl.outerHTML = `
+          <div class="pcard-confirm ok">
+            <span class="confirm-ic">&#10003;</span>
+            <div>
+              <div class="confirm-text">Payment sent via PayPal${amtNote}</div>
+              <div class="confirm-sub">Just now</div>
+            </div>
+          </div>`;
+        toast('Payment approved and sent via PayPal');
+      } else {
+        actsEl.outerHTML = `
+          <div class="pcard-confirm rej">
+            <span class="confirm-ic">&#10005;</span>
+            <div>
+              <div class="confirm-text">Declined</div>
+              <div class="confirm-sub">Just now</div>
+            </div>
+          </div>`;
+        toast('Payment request declined');
+      }
+    }
+
+    const card = document.getElementById('pcard-' + payoutId);
+    if (card) card.classList.add('done');
+
+    const badge = document.getElementById('b-pending');
+    if (badge && badge.classList.contains('v')) {
+      const n = (parseInt(badge.textContent, 10) || 1) - 1;
+      if (n <= 0) badge.classList.remove('v'); else badge.textContent = String(n);
+    }
+  } catch (err) {
+    toast('Network error: ' + err.message, true);
+    buttons.forEach(b => { b.disabled = false; });
+    if (approveBtn) approveBtn.textContent = 'Approve & Pay →';
+    if (rejectBtn)  rejectBtn.textContent  = 'Decline';
+  }
+}
+
+// ── Lightbox ───────────────────────────────────────────────────────────────────
+function lbOpen(payoutId, idx) {
+  const p = currentPayouts.find(x => x.id === payoutId);
+  lbPhotos = p && p.photo_urls ? p.photo_urls.filter(ph => ph && ph.url) : [];
+  lbIdx    = Math.max(0, Math.min(idx, lbPhotos.length - 1));
+  if (!lbPhotos.length) return;
+  lbRender();
+  document.getElementById('lb').classList.add('open');
+  document.addEventListener('keydown', lbKey);
+}
+
+function lbClose() {
+  document.getElementById('lb').classList.remove('open');
+  document.removeEventListener('keydown', lbKey);
+}
+
+function lbNav(dir) {
+  lbIdx = (lbIdx + dir + lbPhotos.length) % lbPhotos.length;
+  lbRender();
+}
+
+function lbRender() {
+  document.getElementById('lb-img').src = lbPhotos[lbIdx].url;
+  document.getElementById('lb-counter').textContent =
+    lbPhotos.length > 1 ? (lbIdx + 1) + ' / ' + lbPhotos.length : '';
+  const multi = lbPhotos.length > 1;
+  document.getElementById('lb-prev').style.display = multi ? '' : 'none';
+  document.getElementById('lb-next').style.display = multi ? '' : 'none';
+}
+
+function lbKey(e) {
+  if (e.key === 'Escape')     lbClose();
+  if (e.key === 'ArrowLeft')  lbNav(-1);
+  if (e.key === 'ArrowRight') lbNav(1);
+}
+
+// ── Toast ──────────────────────────────────────────────────────────────────────
+function toast(msg, isErr) {
+  const el = document.getElementById('toast');
+  el.classList.toggle('te', !!isErr);
+  document.getElementById('tmsg').textContent = msg;
+  el.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.remove('show'), 3500);
+}
+
+// ── Helpers ────────────────────────────────────────────────────────────────────
+function show(id) { document.getElementById(id).style.display = ''; }
+function hide(id) { document.getElementById(id).style.display = 'none'; }
+function esc(s)   { return String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function statusLabel(s) { return { pending: 'Pending', paid: 'Paid', rejected: 'Rejected' }[s] || s; }
+
+loadPayouts('pending');
+</script>
+</body>
+</html>
