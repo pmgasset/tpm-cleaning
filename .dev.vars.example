@@ -1,0 +1,16 @@
+# Copy this file to .dev.vars and fill in the values.
+# .dev.vars is gitignored — never commit it.
+#
+# To upload all secrets at once:
+#   npx wrangler pages secret bulk .dev.vars --project-name jordanview-cleaning
+
+WP_API_KEY=
+VOIPMS_USER=
+VOIPMS_PASS=
+VOIPMS_DID=
+OWNER_PHONE=
+SHORTLINK_TOKEN=
+PAYPAL_CLIENT_ID=
+PAYPAL_CLIENT_SECRET=
+CLEANER_PAYPAL_EMAIL=
+OWNER_EMAIL=

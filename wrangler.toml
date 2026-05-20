@@ -11,28 +11,24 @@ database_id = "e395268e-9896-4519-b88f-b0213a703c15"
 binding = "PHOTOS"
 bucket_name = "jordanview-cleaning-photos"
 
-# ── Secrets — set via Cloudflare dashboard or `wrangler pages secret put <NAME>` ──
+# ── Non-secret vars (safe to commit) ──────────────────────────────────────────
+[vars]
+WP_API_URL    = "https://240jordanview.com/wp-json/cleanerportal/v1"
+PORTAL_URL    = "https://cleaning.240jordanview.com"
+PAYPAL_MODE   = "sandbox"
+CLEANER_NAME  = "Maria"
+
+# ── Secrets (never commit) ────────────────────────────────────────────────────
+# Fill in .dev.vars (gitignored) then run once:
+#   npx wrangler pages secret bulk .dev.vars --project-name jordanview-cleaning
 #
-# WordPress connection
-#   WP_API_URL             https://240jordanview.com/wp-json/cleanerportal/v1
-#   WP_API_KEY             random string matching JV_CLEANER_API_KEY in wp-config.php
-#
-# voip.ms SMS  (same credentials your GMS plugin already uses in WordPress)
-#   VOIPMS_USER            voip.ms account email        → same as gms_voipms_user WP option
-#   VOIPMS_PASS            voip.ms API password         → same as gms_voipms_pass WP option
-#   VOIPMS_DID             sending DID, digits only     → same as gms_voipms_did WP option
+#   WP_API_KEY             random string — must match JV_CLEANER_API_KEY in wp-config.php
+#   VOIPMS_USER            voip.ms account email        (= gms_voipms_user WP option)
+#   VOIPMS_PASS            voip.ms API password         (= gms_voipms_pass WP option)
+#   VOIPMS_DID             sending DID, digits only     (= gms_voipms_did WP option)
 #   OWNER_PHONE            your mobile, digits only     e.g. 7801234567
-#
-# 240jv.link shortener
-#   SHORTLINK_TOKEN        Bearer token for 240jv.link  → same as gms_shortener_api_token WP option
-#
-# PayPal Payouts
-#   PAYPAL_CLIENT_ID       from developer.paypal.com → My Apps → your app
-#   PAYPAL_CLIENT_SECRET   from developer.paypal.com → My Apps → your app
-#   PAYPAL_MODE            live   (use "sandbox" while testing)
-#   CLEANER_PAYPAL_EMAIL   your cleaner's PayPal email address
-#   CLEANER_NAME           e.g. Maria
-#
-# Portal
-#   OWNER_EMAIL            your email (gates /api/payout/approve to you only)
-#   PORTAL_URL             https://cleaning.240jordanview.com
+#   SHORTLINK_TOKEN        Bearer token for 240jv.link  (= gms_shortener_api_token WP option)
+#   PAYPAL_CLIENT_ID       from developer.paypal.com → My Apps
+#   PAYPAL_CLIENT_SECRET   from developer.paypal.com → My Apps
+#   CLEANER_PAYPAL_EMAIL   cleaner's PayPal email address
+#   OWNER_EMAIL            your email (gates /owner to you only)
