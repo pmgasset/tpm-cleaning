@@ -353,7 +353,7 @@ async function loadSchedule(){
 function renderHero(){
   const r=reservations[0];
   if(!r){document.getElementById('hero').innerHTML='<div class="sbox" style="margin-bottom:22px">🏡 No upcoming checkouts — enjoy the break!</div>';return;}
-  const co=pd(r.checkout_date),ci=pd(r.checkin_date);
+  const co=pd(r.checkout_date),ci=pd(reservations[1]?.checkin_date);
   const g=[r.guests?`${r.guests} guests`:null,r.pets?`${r.pets} pet${r.pets>1?'s':''}`:null].filter(Boolean).join(', ');
   document.getElementById('hero').innerHTML=`
     <div class="hero">
@@ -370,7 +370,7 @@ function renderHero(){
 
 function renderList(){
   document.getElementById('rlist').innerHTML=reservations.map((r,i)=>{
-    const co=pd(r.checkout_date),ci=pd(r.checkin_date),w=wh(co,ci);
+    const co=pd(r.checkout_date),ci=pd(reservations[i+1]?.checkin_date),w=wh(co,ci);
     const g=[r.guests?`${r.guests} guests`:null,r.pets?`${r.pets} pet${r.pets>1?'s':''}`:null].filter(Boolean).join(', ');
     const wide=w&&w.includes('day')&&parseInt(w)>=2;
     const pc=r.tentative?'p-tent':wide?'p-gap':'p-co';
@@ -387,8 +387,8 @@ function renderList(){
 function populateSel(){
   const s=document.getElementById('f-res');
   s.innerHTML='<option value="">Select a stay…</option>'+reservations.map(r=>{
-    const co=pd(r.checkout_date),ci=pd(r.checkin_date);
-    return`<option value="${r.id}">${fd(co,'s')}${ci?' → '+fd(ci,'s'):''}</option>`;
+    const ci=pd(r.checkin_date),co=pd(r.checkout_date);
+    return`<option value="${r.id}">${fd(ci,'s')} → ${fd(co,'s')}</option>`;
   }).join('');
 }
 
@@ -396,12 +396,14 @@ function populateSel(){
 function om(i){
   curModal=reservations[i]||null;
   if(!curModal)return;
-  const r=curModal,co=pd(r.checkout_date),ci=pd(r.checkin_date),w=wh(co,ci);
+  const r=curModal,co=pd(r.checkout_date),ownCi=pd(r.checkin_date);
+  const nextRes=reservations[i+1];
+  const ci=pd(nextRes?.checkin_date),ciTime=nextRes?.checkin_time,w=wh(co,ci);
   const g=[r.guests?`${r.guests} guests`:null,r.pets?`${r.pets} pet${r.pets>1?'s':''}`:null].filter(Boolean).join(', ');
-  document.getElementById('m-title').textContent=[fd(co,'s'),ci?fd(ci,'s'):null].filter(Boolean).join(' → ');
+  document.getElementById('m-title').textContent=[fd(ownCi,'s'),fd(co,'s')].filter(Boolean).join(' → ');
   document.getElementById('m-grid').innerHTML=`
     <div><div class="mflbl">Checkout</div><div class="mfval">${fd(co,'s')}${r.checkout_time?' · '+r.checkout_time:''}</div></div>
-    <div><div class="mflbl">Next check-in</div><div class="mfval">${ci?fd(ci,'s')+(r.checkin_time?' · '+r.checkin_time:''):'—'}</div></div>
+    <div><div class="mflbl">Next check-in</div><div class="mfval">${ci?fd(ci,'s')+(ciTime?' · '+ciTime:''):'—'}</div></div>
     <div><div class="mflbl">Clean window</div><div class="mfval" style="color:var(--sage)">${w||'—'}</div></div>
     <div><div class="mflbl">Guests</div><div class="mfval">${g||'—'}</div></div>`;
   const n=document.getElementById('m-note');
